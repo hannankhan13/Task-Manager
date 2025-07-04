@@ -13,20 +13,23 @@ router.post("/tasks", auth, async (req, res) => {
   }
 });
 
-router.get("/tasks", async (req, res) => {
+router.get("/tasks", auth, async (req, res) => {
   try {
-    const tasks = await Task.find({}).exec();
-    res.send(tasks);
+    // const tasks = await Task.find({ userId: req.payload._id }).exec();
+    // OR
+    await req.payload.populate("tasks");
+
+    res.send(req.payload.tasks);
   } catch (error) {
-    res.status(500).send();
+    res.status(500).send(error);
   }
 });
 
-router.get("/tasks/:id", async (req, res) => {
+router.get("/tasks/:id", auth, async (req, res) => {
   const _id = req.params.id;
 
   try {
-    const task = await Task.findById(_id).exec();
+    const task = await Task.findOne({ _id, userId: req.payload._id }).exec();
     if (!task) {
       return res.status(404).send();
     }
@@ -36,7 +39,7 @@ router.get("/tasks/:id", async (req, res) => {
   }
 });
 
-router.patch("/tasks/:id", async (req, res) => {
+router.patch("/tasks/:id", auth, async (req, res) => {
   const allowedUpdates = ["description", "completed"];
   const updates = Object.keys(req.body);
 
@@ -53,10 +56,13 @@ router.patch("/tasks/:id", async (req, res) => {
     //   new: true,
     //   runValidators: true,
     // }).exec();
-    const task = await Task.findById(req.params.id).exec();
+    const task = await Task.findOne({
+      _id: req.params.id,
+      userId: req.payload._id,
+    }).exec();
 
     if (!task) {
-      return res.status(404).send({ error: "Task not found!" });
+      return res.status(404).send();
     }
     updates.forEach((update) => (task[update] = req.body[update]));
     await task.save();
@@ -67,11 +73,14 @@ router.patch("/tasks/:id", async (req, res) => {
   }
 });
 
-router.delete("/tasks/:id", async (req, res) => {
+router.delete("/tasks/:id", auth, async (req, res) => {
   try {
-    const task = await Task.findByIdAndDelete(req.params.id).exec();
+    const task = await Task.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.payload._id,
+    }).exec();
     if (!task) {
-      return res.status(404).send({ error: "Task not found!" });
+      return res.status(404).send();
     }
     res.send(task);
   } catch (error) {
