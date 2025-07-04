@@ -57,14 +57,14 @@ userSchema.methods.toJSON = function () {
 
   delete userObject.password;
   delete userObject.tokens;
-  
+
   return userObject;
 };
 
 userSchema.methods.generateAuthToken = async function () {
   return new Promise((resolve, reject) => {
     const payload = {
-      _id: this._id.toString(),
+      _id: this._id.toString(), // Here we can directly use id instead of_id.toString() because this._id.toString() === this.id, though first is safer version
     };
 
     const secret = "topSecret";

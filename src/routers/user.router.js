@@ -54,19 +54,6 @@ router.get("/users/me", auth, async (req, res) => {
   res.send(req.payload);
 });
 
-router.get("/users/:id", async (req, res) => {
-  const _id = req.params.id;
-
-  try {
-    const user = await User.findById(_id).exec();
-    if (!user) {
-      return res.status(404).send();
-    }
-    res.send(user);
-  } catch (e) {
-    res.status(500).send();
-  }
-});
 router.patch("/users/:id", async (req, res) => {
   const allowedUpdates = ["name", "email", "age", "password"];
   const updates = Object.keys(req.body);
@@ -95,13 +82,15 @@ router.patch("/users/:id", async (req, res) => {
   }
 });
 
-router.delete("/users/:id", async (req, res) => {
+router.delete("/users/me", auth, async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id).exec();
-    if (!user) {
-      return res.status(404).send({ error: "User not found!" });
-    }
-    res.send(user);
+    // const user = await User.findByIdAndDelete(req.payload._id).exec();
+    // if (!user) {
+    //   return res.status(404).send({ error: "User not found!" });
+    // }
+    // console.log(req.payload.constructor.name);
+    await req.payload.deleteOne();
+    res.send(req.payload);
   } catch (e) {
     res.status(500).send(e);
   }
