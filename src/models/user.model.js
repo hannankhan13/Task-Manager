@@ -52,6 +52,15 @@ const userSchema = new Schema({
   ],
 });
 
+userSchema.methods.toJSON = function () {
+  const userObject = this.toObject();
+
+  delete userObject.password;
+  delete userObject.tokens;
+  
+  return userObject;
+};
+
 userSchema.methods.generateAuthToken = async function () {
   return new Promise((resolve, reject) => {
     const payload = {
@@ -69,7 +78,7 @@ userSchema.methods.generateAuthToken = async function () {
         return reject({ error: "Something went wrong" });
       }
       this.tokens = [...this.tokens, { token }];
-      this.save()
+      this.save();
       resolve(token);
     });
   });
