@@ -3,7 +3,6 @@ const app = express();
 require("./db/mongoose");
 const userRouter = require("./routers/user.router");
 const taskRouter = require("./routers/task.router");
-const bcrypt = require("bcryptjs");
 
 const PORT = process.env.PORT || 3000;
 app.use(express.json());

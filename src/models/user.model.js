@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const userSchema = new Schema({
   name: {
@@ -41,7 +42,38 @@ const userSchema = new Schema({
       }
     },
   },
+  tokens: [
+    {
+      token: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
 });
+
+userSchema.methods.generateAuthToken = async function () {
+  return new Promise((resolve, reject) => {
+    const payload = {
+      _id: this._id.toString(),
+    };
+
+    const secret = "topSecret";
+    const options = {
+      expiresIn: "10h",
+    };
+
+    jwt.sign(payload, secret, options, (err, token) => {
+      // Here this inherits from the surrounding lexical scope. i.e generateAuthToken
+      if (err) {
+        return reject({ error: "Something went wrong" });
+      }
+      this.tokens = [...this.tokens, { token }];
+      this.save()
+      resolve(token);
+    });
+  });
+};
 
 userSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email }).exec();
