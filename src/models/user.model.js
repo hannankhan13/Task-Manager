@@ -113,6 +113,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// Delete user tasks when user is removed
 userSchema.pre(
   "deleteOne",
   { document: true, query: false },
