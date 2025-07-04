@@ -28,6 +28,18 @@ router.post("/users/login", async (req, res) => {
   }
 });
 
+router.post("/users/logout", auth, async (req, res) => {
+  try {
+    req.payload.tokens = req.payload.tokens.filter(
+      (token) => token.token !== req.token
+    );
+    await req.payload.save();
+    res.send();
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
 router.get("/users/me", auth, async (req, res) => {
   res.send(req.payload);
 });
