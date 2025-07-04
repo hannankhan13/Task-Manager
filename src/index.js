@@ -26,3 +26,18 @@ app.listen(PORT, () => {
 // };
 
 // console.log(JSON.stringify(pet));
+
+// const Task = require("./models/task.model");
+// const User = require("./models/user.model");
+
+// const main = async () => {
+  // const task = await Task.findById("6868355e3c89bf132aa5157c");
+  // await task.populate("userId");
+  // console.log(task);
+
+//   const user = await User.findById("686835423c89bf132aa51576");
+//   await user.populate("tasks");
+//   console.log(user.tasks);
+// };
+
+// main();
