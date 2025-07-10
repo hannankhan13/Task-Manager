@@ -31,9 +31,9 @@ app.listen(PORT, () => {
 // const User = require("./models/user.model");
 
 // const main = async () => {
-  // const task = await Task.findById("6868355e3c89bf132aa5157c");
-  // await task.populate("userId");
-  // console.log(task);
+// const task = await Task.findById("6868355e3c89bf132aa5157c");
+// await task.populate("userId");
+// console.log(task);
 
 //   const user = await User.findById("686835423c89bf132aa51576");
 //   await user.populate("tasks");
@@ -41,3 +41,24 @@ app.listen(PORT, () => {
 // };
 
 // main();
+
+// *** FILE UPLOADS ***
+
+const multer = require("multer");
+
+const upload = multer({
+  dest: "images",
+  limits: {
+    fileSize: 1000000, // 1 MB
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(doc|docx)$/)) {
+      return cb(new Error("Please upload a word document"));
+    }
+    return cb(undefined, true);
+  },
+});
+
+app.post("/upload", upload.single("upload"), (req, res) => {
+  res.send();
+});
