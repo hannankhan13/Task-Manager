@@ -95,7 +95,7 @@ router.delete("/users/me", auth, async (req, res) => {
 });
 
 const upload = multer({
-  dest: "avatars", // "avatars" is the folder name
+  // dest: "avatars", // "avatars" is the folder name  REMOVE WHEN NEED SAVING BUFFER OF THAT IMAGE IN DB
   limits: {
     fileSize: 1000000,
   },
@@ -110,14 +110,21 @@ const upload = multer({
 
 router.post(
   "/users/me/avatar",
+  auth,
   upload.single("avatar"),
-  (req, res) => {
+  async (req, res) => {
     // avatar is the key name
+    req.payload.avatar = req.file.buffer;
+    await req.payload.save();
     res.send();
   },
   (err, req, res, next) => {
     res.status(400).send({ error: err.message });
   }
 );
+// <img src="data:image/jpg;base64,sdfjadshnfkjds" >
+
 
 module.exports = router;
+
+
