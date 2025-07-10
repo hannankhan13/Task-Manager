@@ -108,9 +108,16 @@ const upload = multer({
   },
 });
 
-router.post("/users/me/avatar", upload.single("avatar"), (req, res) => {
-  // avatar is the key name
-  res.send();
-});
+router.post(
+  "/users/me/avatar",
+  upload.single("avatar"),
+  (req, res) => {
+    // avatar is the key name
+    res.send();
+  },
+  (err, req, res, next) => {
+    res.status(400).send({ error: err.message });
+  }
+);
 
 module.exports = router;

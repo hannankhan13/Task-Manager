@@ -59,6 +59,25 @@ const upload = multer({
   },
 });
 
-app.post("/upload", upload.single("upload"), (req, res) => {
-  res.send();
-});
+app.post(
+  "/upload",
+  upload.single("upload"),
+  (req, res) => {
+    res.send();
+  },
+  (err, req, res, next) => {
+    res.status(400).send({
+      status: 400,
+      message: err.message,
+    });
+  }
+);
+
+
+// Add error handler either in a route after handler or here
+// app.use((err, req, res, next) => {
+//   res.status(err.status || 500).send({
+//     status: err.status || 500,
+//     message: err.message,
+//   });
+// });
