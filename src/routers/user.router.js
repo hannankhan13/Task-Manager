@@ -3,6 +3,7 @@ const router = new express.Router();
 const User = require("../models/user.model");
 const auth = require("../middleware/auth");
 const multer = require("multer");
+const sharp = require("sharp"); // for resizing and change image upload formats
 
 router.post("/users", async (req, res) => {
   const user = new User(req.body);
@@ -114,7 +115,11 @@ router.post(
   upload.single("avatar"),
   async (req, res) => {
     // avatar is the key name
-    req.payload.avatar = req.file.buffer;
+    const buffer = await sharp(req.file.buffer)
+      .resize({ height: 250, width: 250 })
+      .png()
+      .toBuffer();
+    req.payload.avatar = buffer;
     await req.payload.save();
     res.send();
   },
