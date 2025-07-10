@@ -124,7 +124,14 @@ router.post(
 );
 // <img src="data:image/jpg;base64,sdfjadshnfkjds" >
 
+router.delete("/users/me/avatar", auth, async (req, res) => {
+  try {
+    req.payload.avatar = undefined;
+    await req.payload.save();
+    res.send();
+  } catch (error) {
+    res.status(500).send();
+  }
+});
 
 module.exports = router;
-
-
