@@ -83,7 +83,7 @@ userSchema.methods.generateAuthToken = async function () {
       _id: this._id.toString(), // Here we can directly use id instead of_id.toString() because this._id.toString() === this.id, though first is safer version
     };
 
-    const secret = "topSecret";
+    const secret = process.env.JWT_SECRET;
     const options = {
       expiresIn: "10h",
     };

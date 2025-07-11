@@ -4,11 +4,13 @@ const User = require("../models/user.model");
 const auth = require("../middleware/auth");
 const multer = require("multer");
 const sharp = require("sharp"); // for resizing and change image upload formats
+const { sendWelcomeEmail, sendGoodbyeEmail } = require("../emails/accounts");
 
 router.post("/users", async (req, res) => {
   const user = new User(req.body);
   try {
     await user.save();
+    sendWelcomeEmail(user.email, user.name);
     const token = await user.generateAuthToken();
     res.status(201).send({ user, token });
   } catch (error) {
@@ -89,6 +91,7 @@ router.delete("/users/me", auth, async (req, res) => {
     // }
     // console.log(req.payload.constructor.name);
     await req.payload.deleteOne();
+    sendGoodbyeEmail(req.payload.email, req.payload.name);
     res.send(req.payload);
   } catch (e) {
     res.status(500).send(e);

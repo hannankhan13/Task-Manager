@@ -1,17 +1,14 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 require("./db/mongoose");
 const userRouter = require("./routers/user.router");
 const taskRouter = require("./routers/task.router");
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 app.use(express.json());
 app.use(userRouter);
 app.use(taskRouter);
-
-app.listen(PORT, () => {
-  console.log("Server is up and running on port " + PORT);
-});
 
 // Whenever JSON.stringify is call on an object if it contains toJSON it will get called first and whatever it returns the JSON.stringify wil print only that
 // const pet = {
@@ -73,7 +70,6 @@ app.post(
   }
 );
 
-
 // Add error handler either in a route after handler or here
 // app.use((err, req, res, next) => {
 //   res.status(err.status || 500).send({
@@ -81,3 +77,6 @@ app.post(
 //     message: err.message,
 //   });
 // });
+app.listen(PORT, () => {
+  console.log("Server is up and running on port " + PORT);
+});
